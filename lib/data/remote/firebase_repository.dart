@@ -64,4 +64,9 @@ class FirebaseRepository {
     }
   }
 
+
+  static Future<QuerySnapshot<Map<String,dynamic>>> getAllContacts(){
+    return firestore.collection(COLLECTION_USERS).get();
+    }
+
 }
