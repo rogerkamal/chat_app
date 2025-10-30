@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
         ],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text("Messages")],
+          children: [Text("Messages"),],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => ContactsPage()),
           );
         },
-        child: Icon(Icons.add,color: Colors.orange,),
+        child: Icon(Icons.message,color: Colors.orange,),
       ),
     );
   }

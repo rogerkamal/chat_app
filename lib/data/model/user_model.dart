@@ -37,17 +37,18 @@ class UserModel{
     'status' : status
   };
 
-  factory UserModel.fromDoc(Map<String, dynamic> map){
+  factory UserModel.fromDoc(Map<String, dynamic> document){
     return UserModel(
-        name: map['name'],
-        createdAt: map['createdAt'],
-        email: map['email'],
-        gender: map['gender'],
-        isOnline: map['isOnline'],
-        mobNo: map['mobNo'],
-        profilePic: map['profilePic'],
-        profileStatus: map['profileStatus'],
-        status: map['status']
+        userId: document['userId'],
+        name: document['name'],
+        createdAt: document['createdAt'],
+        email: document['email'],
+        gender: document['gender'],
+        isOnline: document['isOnline'],
+        mobNo: document['mobNo'],
+        profilePic: document['profilePic'],
+        profileStatus: document['profileStatus'],
+        status: document['status']
     );
   }
 

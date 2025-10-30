@@ -1,5 +1,6 @@
 import 'package:chat_app/data/model/user_model.dart';
 import 'package:chat_app/data/remote/firebase_repository.dart';
+import 'package:chat_app/ui/chat/chat_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,12 @@ class ContactsPage extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Card(child: 
                       ListTile(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId: currModel.userId!, uName: currModel.name!, uProfilePic: currModel.profilePic!,)));
+                        },
+                        leading: CircleAvatar(
+                          backgroundImage: currModel.profilePic != "" ? NetworkImage(currModel.profilePic!) : AssetImage('assets/app_image/ic_user.png')
+                        ),
                         title: Text(currModel.name!),
                         subtitle: Text(currModel.email!.toString()),
                       )),
