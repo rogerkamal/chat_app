@@ -121,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
 
                 }else{
                   return Center(child:
-                    Text("No messages yet!, \nstart a conversation today..",style: TextStyle(color: Colors.grey),),);
+                    Text("No messages yet! \nStart a conversation today..",style: TextStyle(color: Colors.grey),),);
                 }
 
 
