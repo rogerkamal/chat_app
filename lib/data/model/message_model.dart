@@ -36,7 +36,7 @@ class MessageModel {
     'msgId' :msgId,
     'sentAt' :sentAt,
     'readAt' :readAt,
-    'fromId': readAt,
+    'fromId': fromId,
     'toId' : toId,
     'msgType' :msgType,
     'imgUrl' :imgUrl

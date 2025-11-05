@@ -24,65 +24,58 @@ class FirebaseRepository {
         password: pass,
       );
 
-      if (userCred.user!= null) {
+      if (userCred.user != null) {
         user.userId = userCred.user!.uid;
         firestore
             .collection(COLLECTION_USERS)
             .doc(userCred.user!.uid)
             .set(user.toDoc())
-            .catchError((error){
-              throw(Exception("Error: $error"));
-        });
+            .catchError((error) {
+              throw (Exception("Error: $error"));
+            });
       }
     } on FirebaseAuthException catch (e) {
-
-      throw(Exception("Error: $e"));
+      throw (Exception("Error: $e"));
     } catch (e) {
-      throw(Exception("Error: $e"));
-
+      throw (Exception("Error: $e"));
     }
   }
 
-  Future<void> loginUser({
-    required String email,
-    required String pass,
-  }) async {
+  Future<void> loginUser({required String email, required String pass}) async {
     try {
       var userCred = await firebaseAuth.signInWithEmailAndPassword(
-          email: email,
-          password: pass);
+        email: email,
+        password: pass,
+      );
 
-      if (userCred.user!= null) {
+      if (userCred.user != null) {
         ///add userid in Sharedprefs
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString(AppConstants.prefUserIdKey, userCred.user!.uid);
       }
     } on FirebaseAuthException catch (e) {
-
-      throw(Exception("Error: Invalid email or Password"));
+      throw (Exception("Error: Invalid email or Password"));
     } catch (e) {
-      throw(Exception("Error: $e"));
-
+      throw (Exception("Error: $e"));
     }
   }
 
-
-  static Future<QuerySnapshot<Map<String,dynamic>>> getAllContacts(){
+  static Future<QuerySnapshot<Map<String, dynamic>>> getAllContacts() {
     return firestore.collection(COLLECTION_USERS).get();
-    }
+  }
 
   static Future<String> getFromId() async {
-      var prefs = await  SharedPreferences.getInstance();
-      return prefs.getString(AppConstants.prefUserIdKey)!;
+    var prefs = await SharedPreferences.getInstance();
+    return prefs.getString(AppConstants.prefUserIdKey)!;
   }
 
-  static String getChatId({required  String fromId, required String toId}){
-  if(fromId.hashCode<=toId.hashCode){
-    return "${fromId}_${toId}";
-  }else{
-    return "${toId}_${fromId}";
+  static String getChatId({required String fromId, required String toId}) {
+    if (fromId.hashCode <= toId.hashCode) {
+      return "${fromId}_${toId}";
+    } else {
+      return "${toId}_${fromId}";
+    }
   }
-}
 
   static sendTextMessage({required String toId, required String msg}) async {
     String fromId = await getFromId();
@@ -92,21 +85,26 @@ class FirebaseRepository {
     var currTime = DateTime.now().millisecondsSinceEpoch.toString();
 
     var msgModel = MessageModel(
-        msgId: currTime,
-        msg: msg,
-        sentAt: currTime,
-        fromId: fromId,
-        toId: toId);
+      msgId: currTime,
+      msg: msg,
+      sentAt: currTime,
+      fromId: fromId,
+      toId: toId,
+    );
 
-    firestore.collection(COLLECTION_CHATROOM)
-    .doc(chatId)
-    .collection(COLLECTION_MESSAGES)
-    .doc(currTime)
-    .set(msgModel.toDoc());
+    firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .doc(currTime)
+        .set(msgModel.toDoc());
   }
 
-
-  static sendImageMessage({required String toId, required String imgUrl, String msg = ""}) async {
+  static sendImageMessage({
+    required String toId,
+    required String imgUrl,
+    String msg = "",
+  }) async {
     String fromId = await getFromId();
 
     var chatId = await getChatId(fromId: fromId, toId: toId);
@@ -114,20 +112,33 @@ class FirebaseRepository {
     var currTime = DateTime.now().millisecondsSinceEpoch.toString();
 
     var msgModel = MessageModel(
-        msgId: currTime,
-        msg: msg,
-        sentAt: currTime,
-        fromId: fromId,
-        toId: toId,
-        imgUrl: imgUrl,
-        msgType: 1);
+      msgId: currTime,
+      msg: msg,
+      sentAt: currTime,
+      fromId: fromId,
+      toId: toId,
+      imgUrl: imgUrl,
+      msgType: 1,
+    );
 
-    firestore.collection(COLLECTION_CHATROOM)
-    .doc(chatId)
-    .collection(COLLECTION_MESSAGES)
-    .doc(currTime)
-    .set(msgModel.toDoc());
+    firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .doc(currTime)
+        .set(msgModel.toDoc());
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream({
+    required String fromId,
+    required String toId,
+  }) {
+    var chatId = getChatId(fromId: fromId, toId: toId);
 
+    return firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .snapshots();
+  }
 }

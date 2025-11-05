@@ -1,3 +1,4 @@
+import 'package:chat_app/domain/utils/app_constants.dart';
 import 'package:chat_app/domain/utils/app_routes.dart';
 import 'package:chat_app/ui/contacts/contacts_page.dart';
 import 'package:chat_app/ui/settings/settings_page.dart';
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
                 /// Logout logic
                 SharedPreferences? prefs =
                     await SharedPreferences.getInstance();
-                // prefs.remove(AppConstants.prefUserIdKey);
+                prefs.remove(AppConstants.prefUserIdKey);
                 Navigator.pushReplacementNamed(context, AppRoutes.signin);
                 ScaffoldMessenger.of(
                   context,

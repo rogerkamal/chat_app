@@ -221,7 +221,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
 
                         var newUser = UserModel(name: name,
-                            createdAt: DateTime.now().microsecondsSinceEpoch.toString(),
+                            createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
                             email: email,
                             gender: gender,
                             isOnline: false,

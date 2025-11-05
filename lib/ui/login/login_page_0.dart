@@ -140,7 +140,7 @@ class _LoginPage0State extends State<LoginPage0> {
 
                         if(credential.user != null){
                           SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs.setString(AppConstants.prefUserIdKey, credential.user!.displayName.toString());
+                          prefs.setString(AppConstants.prefUserIdKey, credential.user!.email.toString());
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('You are logged in successfully!!'),backgroundColor: Colors.green,),
