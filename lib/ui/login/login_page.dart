@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                             CircularProgressIndicator(color: Colors.white,),
                             SizedBox(width: 10,),
                             Text(
-                              'Logging in...$isLoading',
+                              'Authenticating..',
                               style: TextStyle(
                                 fontSize: 22,
                                 color: Colors.white,

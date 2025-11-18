@@ -64,6 +64,7 @@ class FirebaseRepository {
     return firestore.collection(COLLECTION_USERS).get();
   }
 
+  ///get personal userId
   static Future<String> getFromId() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getString(AppConstants.prefUserIdKey)!;
@@ -91,13 +92,35 @@ class FirebaseRepository {
       fromId: fromId,
       toId: toId,
     );
+    firestore.collection(COLLECTION_CHATROOM).doc(chatId).get().then((value) {
+      if (value.exists) {
+        firestore
+            .collection(COLLECTION_CHATROOM)
+            .doc(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .doc(currTime)
+            .set(msgModel.toDoc());
+      } else {
+        //adding all chat ids in chat document fields
+        firestore.collection(COLLECTION_CHATROOM).doc(chatId).set({
+          'ids': [fromId, toId]
+        }).then((value) => firestore
+            .collection(COLLECTION_CHATROOM)
+            .doc(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .doc(currTime)
+            .set(msgModel.toDoc()));
+      }
+    });
 
-    firestore
+
+    ///before ids
+   /* firestore
         .collection(COLLECTION_CHATROOM)
         .doc(chatId)
         .collection(COLLECTION_MESSAGES)
         .doc(currTime)
-        .set(msgModel.toDoc());
+        .set(msgModel.toDoc());*/
   }
 
   static sendImageMessage({
@@ -141,4 +164,67 @@ class FirebaseRepository {
         .collection(COLLECTION_MESSAGES)
         .snapshots();
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLiveChatContactStream({
+    required String fromId,
+  }) {
+    return firestore
+        .collection(COLLECTION_CHATROOM)
+        .where('ids', arrayContains: fromId)
+        .snapshots();
+  }
+
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUserByUserId({
+    required String userId,
+  }) {
+    return firestore.collection(COLLECTION_USERS).doc(userId).get();
+  }
+
+
+  static void updateReadStatus({required String msgId, required String fromId, required String toId,}){
+    var chatId = getChatId(fromId: fromId, toId: toId);
+    var currTime = DateTime.now().millisecondsSinceEpoch.toString();
+
+    firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .doc(msgId)
+        .update({"readAt" : currTime});
+  }
+
+
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMsg({required String fromId, required String toId}){
+    var chatId = getChatId(fromId: fromId, toId: toId);
+
+    return firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .orderBy("sentAt", descending: true)
+        .limit(1)
+        .snapshots();
+
+}
+
+
+
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUnReadCount({required String fromId, required String toId}){
+    var chatId = getChatId(fromId: fromId, toId: toId);
+
+    return firestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .where("readAt", isEqualTo: "")
+        .where("fromId", isEqualTo: toId)
+        .snapshots();
+
+}
+
+
+
+
 }

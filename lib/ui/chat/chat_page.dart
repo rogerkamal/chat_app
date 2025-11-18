@@ -8,6 +8,8 @@ class ChatPage extends StatefulWidget {
   String userId;
   String uName;
   String uProfilePic;
+  static DateFormat dateFormat = DateFormat.Hm();
+
   ChatPage({
     required this.userId,
     required this.uName,
@@ -22,33 +24,28 @@ class _ChatPageState extends State<ChatPage> {
   List<MessageModel> listMsg = [];
   String fromId = '';
   var msgController = TextEditingController();
-  DateFormat dateFormat = DateFormat.Hm();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     initializeChatRoom();
   }
 
   void initializeChatRoom() async {
-
-
     fromId = await FirebaseRepository.getFromId();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    print("FromId ===$fromId");
+    // print("FromId ===$fromId");
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey.shade800,
+        backgroundColor: Colors.grey.shade900,
         body: Column(
           children: [
             Container(
-              color: Colors.grey.shade800,
+              color: Colors.black,
               child: Padding(
                 padding: EdgeInsets.all(11),
                 child: Row(
@@ -164,10 +161,13 @@ class _ChatPageState extends State<ChatPage> {
   }
         ///right side
   Widget userChatBox(MessageModel msgModel) {
-    var time = dateFormat.format(
+    var time = ChatPage.dateFormat.format(
       DateTime.fromMillisecondsSinceEpoch(int.parse(msgModel.sentAt!)),
     );
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.ideographic,
       children: [
         Container(width: MediaQuery.of(context).size.width * 0.2),
         Flexible(
@@ -187,11 +187,15 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              // mainAxisSize: MainAxisSize.min,
+              // mainAxisAlignment: MainAxisAlignment.end,
+              // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Flexible(child: Text(msgModel.msg!, style: TextStyle(color: Colors.white))),
-                Text(time, style: TextStyle(color: Colors.white)),
+                Flexible(child: Text(msgModel.msg!, style: TextStyle(color: Colors.white,))),
+                SizedBox(width: 11,),
+                Flexible(child: Text(time, style: TextStyle(color: Colors.grey))),
+                SizedBox(width: 11,),
+                Icon(Icons.done_all,color: msgModel.readAt != "" ? Colors.blue : Colors.grey,size: 16)
               ],
             ),
           ),
@@ -203,10 +207,17 @@ class _ChatPageState extends State<ChatPage> {
 
       ///left side
   Widget anotherUserChatBox(MessageModel msgModel, int index) {
-    var time = dateFormat.format(
+
+    ///update read status
+      if(msgModel.readAt == ""){
+        FirebaseRepository.updateReadStatus(msgId: msgModel.msgId!, fromId: fromId, toId: widget.userId);
+      }
+
+    var time = ChatPage.dateFormat.format(
       DateTime.fromMillisecondsSinceEpoch(int.parse(msgModel.sentAt!)),
     );
     return Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
         Flexible(
           child: Container(
@@ -214,10 +225,10 @@ class _ChatPageState extends State<ChatPage> {
             margin: EdgeInsets.all(7),
             decoration: BoxDecoration(
               border: Border.all(
-                color: Colors.amber.shade900.withOpacity(0.5),
+                color: Colors.blueGrey,
                 width: 2,
               ),
-              color: Colors.amber,
+              color: Colors.blue.shade300,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(21),
                 topRight: Radius.circular(21),
@@ -225,10 +236,11 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Stack(
+                ///no need profile pic
+                /*Stack(
                   children: [
                     SizedBox(
                       width: 34,
@@ -244,7 +256,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                   ],
-                ),
+                ),*/
 
                 Expanded(
                   child: Padding(

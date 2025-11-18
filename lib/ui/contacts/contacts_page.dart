@@ -30,59 +30,76 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Contacts'),
+        backgroundColor: Colors.black87,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.grey),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('All Contacts',style: TextStyle(color: Colors.grey),),
+          ],
+        ),
       ),
-      body: FutureBuilder<QuerySnapshot<Map<String,dynamic>>>(
-          future: FirebaseRepository.getAllContacts(),
-          builder: (context,snapshot){
-            if(snapshot.connectionState==ConnectionState.waiting){
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }else if(snapshot.hasError){
-              return Center(child: Text(snapshot.error.toString()),);
-            }else if(snapshot.hasData){
+      body: Container(
+        color: Colors.grey.shade800,
+        child: FutureBuilder<QuerySnapshot<Map<String,dynamic>>>(
+            future: FirebaseRepository.getAllContacts(),
+            builder: (context,snapshot){
+              if(snapshot.connectionState==ConnectionState.waiting){
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }else if(snapshot.hasError){
+                return Center(child: Text(snapshot.error.toString()),);
+              }else if(snapshot.hasData){
 
-              var listContact = List
-              .generate(snapshot.data!.docs.length, (index){
-                return UserModel.fromDoc(snapshot.data!.docs[index].data());
-              });
-
-
-             /* // Convert snapshot to UserModel list
-              final docs = snapshot.data!.docs;
-
-              //  Filter out current user you don’t want to show
-              final filteredDocs = docs.where((doc) {
-                var user = UserModel.fromDoc(doc.data());
-                return user.email != getCurrentUser();  // show only active users
-              }).toList();*/
-              listContact.removeWhere((element) => element.userId == currUserEmailId);
-
-              return ListView.builder(
-                  itemCount: listContact.length,
-                  itemBuilder: (_, index){
-                    var currModel = listContact[index];
+                var listContact = List
+                .generate(snapshot.data!.docs.length, (index){
+                  return UserModel.fromDoc(snapshot.data!.docs[index].data());
+                });
 
 
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(child:
-                      ListTile(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId: currModel.userId!, uName: currModel.name!, uProfilePic: currModel.profilePic!,)));
-                        },
-                        leading: CircleAvatar(
-                          backgroundImage: currModel.profilePic != "" ? NetworkImage(currModel.profilePic!) : AssetImage('assets/app_image/ic_user.png')
-                        ),
-                        title: Text(currModel.name!),
-                        subtitle: Text(currModel.email!.toString()),
-                      )),
-                    );
-                  });
-            }
-            return Container();
-          }),
+               /* // Convert snapshot to UserModel list
+                final docs = snapshot.data!.docs;
+
+                //  Filter out current user you don’t want to show
+                final filteredDocs = docs.where((doc) {
+                  var user = UserModel.fromDoc(doc.data());
+                  return user.email != getCurrentUser();  // show only active users
+                }).toList();*/
+                listContact.removeWhere((element) => element.userId == currUserEmailId);
+
+                return ListView.builder(
+                    itemCount: listContact.length,
+                    itemBuilder: (_, index){
+                      var currModel = listContact[index];
+
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                            color: Colors.black87,
+                            child:
+                        ListTile(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId: currModel.userId!, uName: currModel.name!, uProfilePic: currModel.profilePic!,)));
+                          },
+                          leading: CircleAvatar(
+                            backgroundImage: currModel.profilePic != "" ? NetworkImage(currModel.profilePic!) : AssetImage('assets/app_image/ic_user.png')
+                          ),
+                          title: Text(currModel.name!,style: TextStyle(color: Colors.white),),
+                          subtitle: Text(currModel.email!.toString(),style: TextStyle(color: Colors.grey),),
+                        )),
+                      );
+                    });
+              }
+              return Container();
+            }),
+      ),
     );
   }
 

@@ -46,19 +46,22 @@ class _SplashPageState extends State<SplashPage> {
                 Colors.green
               ],
             ).createShader(bounds),
-            child: Center(
-              child: /*Text(
-                'Chat App',
-                style: TextStyle(color: Colors.white, fontSize: 40,fontWeight: FontWeight.bold),
-              ),*/
-              Image.asset("assets/app_image/logo.png",height: 30,fit: BoxFit.cover,color: Colors.deepOrange),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("assets/app_image/logo.png",height: 30,fit: BoxFit.cover,color: Colors.deepOrange),
+                Text(
+                  'Chat App',
+                  style: TextStyle(color: Colors.white, fontSize: 40,fontWeight: FontWeight.bold),
+                ),
+              ]
 
             ),
           ),
 
             decoration: BoxDecoration(
-              /*color: Colors.blueGrey*/
-                gradient: LinearGradient(
+              color: Colors.black
+                /*gradient: LinearGradient(
                     stops: [0.0, 0.3, 0.7],
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -66,7 +69,7 @@ class _SplashPageState extends State<SplashPage> {
                       Color(0xffff9a01),
                       Color(0xfffad100),
                       Color(0xff009dff)
-                    ])
+                    ])*/
             ),
           ),
           /*Row(
